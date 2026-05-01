@@ -31,3 +31,13 @@ Real-Time clock
 2) style.css
 3) script.js
 4) README.md
+
+🚀 Just deployed my Real-Time Digital Clock ⏰
+
+🌐 Live Demo:
+https://real-time-clock-project-day1.vercel.app/
+
+Built using HTML, CSS & JavaScript  
+Real-time updates + modern UI + responsive design  
+
+#Frontend #JavaScript #WebDevelopment
