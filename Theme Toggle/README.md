@@ -6,12 +6,12 @@ This project allows users to switch between **Light Mode and Dark Mode** with sm
 ---
 
 ## 🚀 Live Demo
-🔗 https://your-username.github.io/theme-toggle-app/
+🔗 https://linkdin-project-2.vercel.app/
 
 ---
 
 ## 💻 GitHub Repository
-🔗 https://github.com/your-username/theme-toggle-app
+🔗 https://github.com/sindhavdinesh/linkdin-project/tree/main/Theme%20Toggle
 
 ---
 
