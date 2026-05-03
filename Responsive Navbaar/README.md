@@ -3,7 +3,7 @@
 
 ## 🔗 Live Demo
 
-👉 [Add your live link here]
+👉 [https://linkdin-project-qnts.vercel.app/]
 
 ---
 
