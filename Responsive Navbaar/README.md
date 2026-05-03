@@ -9,7 +9,7 @@
 
 ## 💻 GitHub Repository
 
-👉 [Add your GitHub repo link here]
+👉 [https://github.com/sindhavdinesh/linkdin-project/tree/main/Responsive%20Navbaar]
 
 ---
 
