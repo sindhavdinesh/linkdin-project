@@ -11,6 +11,8 @@ This project uses high-quality cinematic wallpapers of:
 * 🦇 **Batman** — The Dark Knight
 * 🤖 **Iron Man** — The Tech Genius
 * 🕷️ **Spider-Man** — The Friendly Hero
+* 🐾 Black Panther — Wakanda Forever
+* 🐜 Ant-Man — The Tiny Avenger  
 
 These images enhance the **cinematic + “dangerous” vibe** of the UI.
 
