@@ -141,4 +141,4 @@ Made with 💻 + 🔥 by *Dinesh Sindhav*
 👉 https://your-username.github.io/cinematic-image-slider/
 
 ## 💻 GitHub Repo
-👉 https://github.com/your-username/cinematic-image-slider
+👉 https://github.com/sindhavdinesh/linkdin-project/tree/main/Image%20slider
