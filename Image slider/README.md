@@ -138,7 +138,7 @@ Made with 💻 + 🔥 by *Dinesh Sindhav*
 👉 github and live demo 
 
 ## 🔗 Live Demo
-👉 https://your-username.github.io/cinematic-image-slider/
+👉 https://linkdin-project-zmdn.vercel.app/
 
 ## 💻 GitHub Repo
 👉 https://github.com/sindhavdinesh/linkdin-project/tree/main/Image%20slider
