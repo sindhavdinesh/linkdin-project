@@ -82,13 +82,13 @@ A production-grade **Cinematic Authentication System (Login + Signup)** built us
 
 ## 🌐 Live Demo
 
-👉 [View Live Project](YOUR_LIVE_LINK_HERE)
+👉 [View Live Project](https://linkdin-project-6eus.vercel.app/)
 
 ---
 
 ## 💻 GitHub Repository
 
-👉 [View Source Code](YOUR_GITHUB_REPO_LINK_HERE)
+👉 [View Source Code](https://github.com/sindhavdinesh/linkdin-project/tree/main/Form%20validation)
 
 ---
 
