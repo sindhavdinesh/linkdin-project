@@ -1,3 +1,5 @@
+🚀 Day 6 — 21 Days Frontend Challenge
+
 # 🚀 To-Do App
 
 A modern and responsive **To-Do List Application** built using **HTML, CSS, and JavaScript**.
@@ -150,11 +152,11 @@ This project is perfect for:
 
 ## 🌐 Live Demo
 
-[Click Here to View Live Project](https://your-live-demo-link.com)
+[Click Here to View Live Project](https://linkdin-project-to-do-app.vercel.app/)
 
 ## 📂 GitHub Repository
 
-[Click Here to View Repository](https://github.com/your-username/todo-app)
+[Click Here to View Repository](https://github.com/sindhavdinesh/linkdin-project/tree/main/To-Do%20App%20Project)
 
 ---
 
