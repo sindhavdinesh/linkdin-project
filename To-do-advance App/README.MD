@@ -25,8 +25,8 @@ Special thanks to **Girish Gondaliya** for providing structured guidance, indust
 
 | | Link |
 |---|---|
-| 📂 **GitHub Repository** | [https://github.com/sindhavdinesh/linkdin-project/tree/main/To-do-advance%20App/21-days-frontend-challenge) |
-| 🌐 **Live Demo** | [https://linkdin-project-vi9s.vercel.app//21-days-frontend-challenge) |
+| 📂 **GitHub Repository** | [https://github.com/sindhavdinesh/linkdin-project/tree/main/To-do-advance%20App) |
+| 🌐 **Live Demo** | [https://linkdin-project-vi9s.vercel.app/) |
 
 ## 🎯 Challenge Objective
 
