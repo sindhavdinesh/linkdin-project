@@ -95,7 +95,7 @@ Before writing a single line of code, I followed the **FLOW TEMPLATE** as taught
 |------|-----|
 | 🌐 **Live Demo** | [Click here to view the live project](#) *(replace with your deployed link)* |
 | 💻 **GitHub Repository** | [Click here to view source code](#) *(replace with your GitHub repo link)* |
-| 📅 **Challenge Repository** | [21 Days Frontend Challenge](#) *(optional)* |
+| 📅 **Challenge Repository** | [https://github.com/sindhavdinesh/linkdin-project](#) *(optional)* |
 
 > ⚠️ **Note:** Update the links above with your actual deployed URL and GitHub repo URL after uploading.
 
