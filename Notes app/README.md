@@ -93,8 +93,8 @@ Before writing a single line of code, I followed the **FLOW TEMPLATE** as taught
 
 | Link | URL |
 |------|-----|
-| 🌐 **Live Demo** | [Click here to view the live project](#) *(replace with your deployed link)* |
-| 💻 **GitHub Repository** | [Click here to view source code](#) *(replace with your GitHub repo link)* |
+| 🌐 **Live Demo** | [https://linkdin-note-project.vercel.app/](#) *(replace with your deployed link)* |
+| 💻 **GitHub Repository** | [https://github.com/sindhavdinesh/linkdin-project/tree/main/Notes%20app](#) *(replace with your GitHub repo link)* |
 | 📅 **Challenge Repository** | [https://github.com/sindhavdinesh/linkdin-project](#) *(optional)* |
 
 > ⚠️ **Note:** Update the links above with your actual deployed URL and GitHub repo URL after uploading.
