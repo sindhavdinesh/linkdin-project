@@ -87,10 +87,10 @@ Users can search for any city and get real-time weather information including te
 ---
 
 🌐 Live Demo:
-https://yourusername.github.io/weather-app-day9
+https://wheather-app-project-linkdin.netlify.app/
 
 📁 Source Code:
-https://github.com/yourusername/weather-app-day9
+https://github.com/sindhavdinesh/linkdin-project/tree/main/Wheather%20App
 
 ## ✨ Features Showcase
 
