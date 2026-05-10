@@ -112,4 +112,4 @@ Price slider? Sorting? Let me know in comments! 👇
 
 ### Slide 1: Title Slide
 
-🔗 **github repo:** [Click Here](https://your-username.github.io/product-filter-ui)
+🔗 **github repo:** [Click Here](https://github.com/sindhavdinesh/linkdin-project/tree/main/Product%20filter%20ui)
