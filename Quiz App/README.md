@@ -25,7 +25,7 @@ This project is developed under the expert mentorship of **Geerish Gondaliya Sir
 ---
 
 ## Project link
-[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?logo=github)](https://github.com/yourusername/21-Days-Frontend-Challenge)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?logo=github)](https://github.com/sindhavdinesh/linkdin-project/tree/main/Quiz%20App)
 
 ## 📌 Project Overview
 
