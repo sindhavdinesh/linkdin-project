@@ -31,6 +31,6 @@
 
 ## 🚀 Github repo
 
-[Click Here github repo](https://your-demo-link.com)
+[Click Here github repo](https://github.com/sindhavdinesh/linkdin-project/tree/main/password%20generator)
 
 ## 📁 Project Structure
