@@ -35,4 +35,4 @@ A **production-grade search component** that implements the **debouncing techniq
 
 | Link | URL |
 |------|-----|
-| **GitHub Repository** | [https://github.com/YOUR_USERNAME/debounce-search-project](https://github.com/YOUR_USERNAME/debounce-search-project) |
+| **GitHub Repository** | [https://github.com/YOUR_USERNAME/debounce-search-project](https://github.com/sindhavdinesh/linkdin-project/tree/main/Search%20with%20Debounce) |
