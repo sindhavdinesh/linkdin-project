@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 14: Modal / Popup System | 21 Days Frontend Challenge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Main Container */
+        .container {
+            text-align: center;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .flow-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+
+        /* Button Grid */
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .modal-btn {
+            background: white;
+            border: none;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        /* Modal Container */
+        .modal-container {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        /* Modal Header */
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px 20px 0 0;
+            color: white;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+
+        /* Modal Body */
+        .modal-body {
+            padding: 25px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .modal-body p {
+            margin-bottom: 15px;
+        }
+
+        .modal-body input, 
+        .modal-body textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border 0.3s ease;
+        }
+
+        .modal-body input:focus,
+        .modal-body textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .modal-body textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Modal Footer */
+        .modal-footer {
+            padding: 15px 25px;
+            border-top: 2px solid #f0f0f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .modal-footer button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .btn-cancel:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Different Modal Sizes */
+        .modal-container.small {
+            max-width: 400px;
+        }
+
+        .modal-container.large {
+            max-width: 800px;
+        }
+
+        /* Feature Cards */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: left;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .feature-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Counter Display */
+        .counter-display {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .button-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-container {
+                width: 95%;
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- FLOW Planning Section (Visible for demonstration) -->
+        <div class="header">
+            <h1>🎯 Modal / Popup System</h1>
+            <p>Reusable modal component with multiple triggers and animations</p>
+            <div class="flow-badge">
+                📋 FLOW: Planning → UI → Logic → Edge Cases ✅
+            </div>
+        </div>
+
+        <!-- Different Modal Triggers -->
+        <div class="button-grid">
+            <button class="modal-btn btn-primary" data-modal="simple">
+                📝 Simple Modal
+            </button>
+            <button class="modal-btn btn-success" data-modal="form">
+                ✍️ Form Modal
+            </button>
+            <button class="modal-btn btn-info" data-modal="alert">
+                ⚠️ Alert Modal
+            </button>
+            <button class="modal-btn btn-warning" data-modal="confirm">
+                ❓ Confirm Modal
+            </button>
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="features">
+            <div class="feature-card">
+                <h3>🔄 Reusable Component</h3>
+                <p>Single modal system that works for any content type</p>
+            </div>
+            <div class="feature-card">
+                <h3>🎨 Multiple Triggers</h3>
+                <p>Different buttons open different modal configurations</p>
+            </div>
+            <div class="feature-card">
+                <h3>✨ Smooth Animations</h3>
+                <p>Fade in/out with slide transitions</p>
+            </div>
+            <div class="feature-card">
+                <h3>📱 Responsive Design</h3>
+                <p>Works perfectly on all screen sizes</p>
+            </div>
+        </div>
+
+        <!-- Demo Counter -->
+        <div class="counter-display" id="counterDisplay">
+            📊 Demo Counter: <span id="counterValue">0</span> times
+        </div>
+    </div>
+
+    <!-- Reusable Modal Structure -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div id="modalContainer" class="modal-container">
+            <div class="modal-header">
+                <h2 id="modalTitle">Modal Title</h2>
+                <button class="close-btn" id="closeModalBtn">&times;</button>
+            </div>
+            <div id="modalBody" class="modal-body">
+                <!-- Dynamic content will be injected here -->
+            </div>
+            <div id="modalFooter" class="modal-footer">
+                <!-- Dynamic footer buttons -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        // Modal System
+        class ModalSystem {
+            constructor() {
+                this.overlay = document.getElementById('modalOverlay');
+                this.container = document.getElementById('modalContainer');
+                this.titleElement = document.getElementById('modalTitle');
+                this.bodyElement = document.getElementById('modalBody');
+                this.footerElement = document.getElementById('modalFooter');
+                this.isOpen = false;
+                this.currentCallback = null;
+                
+                this.init();
+            }
+            
+            init() {
+                // Close button event
+                const closeBtn = document.getElementById('closeModalBtn');
+                closeBtn.addEventListener('click', () => this.close());
+                
+                // Click outside to close
+                this.overlay.addEventListener('click', (e) => {
+                    if (e.target === this.overlay) {
+                        this.close();
+                    }
+                });
+                
+                // ESC key to close
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && this.isOpen) {
+                        this.close();
+                    }
+                });
+                
+                // Prevent body scroll when modal is open
+                this.overlay.addEventListener('wheel', (e) => {
+                    if (this.isOpen) {
+                        e.stopPropagation();
+                    }
+                });
+            }
+            
+            open(config) {
+                // Set modal size
+                if (config.size) {
+                    this.container.className = `modal-container ${config.size}`;
+                } else {
+                    this.container.className = 'modal-container';
+                }
+                
+                // Set title
+                this.titleElement.textContent = config.title || 'Modal';
+                
+                // Set body content
+                this.bodyElement.innerHTML = config.body || '<p>Modal content goes here.</p>';
+                
+                // Set footer buttons
+                if (config.buttons && config.buttons.length) {
+                    this.footerElement.innerHTML = '';
+                    config.buttons.forEach(btn => {
+                        const button = document.createElement('button');
+                        button.textContent = btn.text;
+                        button.className = btn.class || 'btn-cancel';
+                        if (btn.onClick) {
+                            button.addEventListener('click', () => {
+                                btn.onClick();
+                                if (btn.closeOnClick !== false) {
+                                    this.close();
+                                }
+                            });
+                        } else {
+                            button.addEventListener('click', () => this.close());
+                        }
+                        this.footerElement.appendChild(button);
+                    });
+                    this.footerElement.style.display = 'flex';
+                } else {
+                    this.footerElement.style.display = 'none';
+                }
+                
+                // Store callback
+                this.currentCallback = config.callback || null;
+                
+                // Show modal
+                this.overlay.classList.add('active');
+                this.isOpen = true;
+                document.body.style.overflow = 'hidden';
+            }
+            
+            close() {
+                this.overlay.classList.remove('active');
+                this.isOpen = false;
+                document.body.style.overflow = '';
+                this.currentCallback = null;
+            }
+        }
+        
+        // Initialize modal system
+        const modal = new ModalSystem();
+        
+        // Demo counter
+        let counter = 0;
+        const counterValue = document.getElementById('counterValue');
+        
+        function updateCounter() {
+            counterValue.textContent = counter;
+        }
+        
+        // Different Modal Configurations
+        
+        // 1. Simple Modal
+        function openSimpleModal() {
+            modal.open({
+                title: '📝 Simple Message',
+                body: `
+                    <p>This is a simple modal with basic information.</p>
+                    <p>You can put any HTML content here - text, images, lists, etc.</p>
+                    <ul style="margin-top: 10px; padding-left: 20px;">
+                        <li>✅ Clean design</li>
+                        <li>✅ Smooth animations</li>
+                        <li>✅ Responsive layout</li>
+                    </ul>
+                `,
+                buttons: [
+                    {
+                        text: 'Got it',
+                        class: 'btn-confirm',
+                        onClick: () => {
+                            console.log('User acknowledged simple modal');
+                        }
+                    }
+                ]
+            });
+        }
+        
+        // 2. Form Modal
+        function openFormModal() {
+            modal.open({
+                title: '✍️ Feedback Form',
+                body: `
+                    <p>We'd love to hear your feedback!</p>
+                    <form id="feedbackForm">
+                        <input type="text" id="userName" placeholder="Your name" required>
+                        <textarea id="userFeedback" placeholder="Your feedback..." required></textarea>
+                        <input type="email" id="userEmail" placeholder="Your email (optional)">
+                    </form>
+                `,
+                buttons: [
+                    {
+                        text: 'Cancel',
+                        class: 'btn-cancel',
+                        onClick: () => {
+                            console.log('Form cancelled');
+                        }
+                    },
+                    {
+                        text: 'Submit',
+                        class: 'btn-confirm',
+                        closeOnClick: false,
+                        onClick: () => {
+                            const name = document.getElementById('userName')?.value;
+                            const feedback = document.getElementById('userFeedback')?.value;
+                            const email = document.getElementById('userEmail')?.value;
+                            
+                            if (!name || !feedback) {
+                                alert('Please fill in name and feedback fields!');
+                                return;
+                            }
+                            
+                            // Simulate form submission
+                            counter++;
+                            updateCounter();
+                            alert(`Thanks ${name}! Your feedback has been submitted.\n\nFeedback: ${feedback}\nEmail: ${email || 'Not provided'}`);
+                            modal.close();
+                        }
+                    }
+                ]
+            });
+        }
+        
+        // 3. Alert Modal
+        function openAlertModal() {
+            modal.open({
+                title: '⚠️ Important Alert',
+                body: `
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">⚠️</div>
+                        <p style="font-size: 1.1rem; margin-bottom: 10px;"><strong>Warning!</strong></p>
+                        <p>This is an important alert message. Please read carefully.</p>
+                        <p style="margin-top: 15px; color: #666;">Your session will expire in 5 minutes due to inactivity.</p>
+                    </div>
+                `,
+                buttons: [
+                    {
+                        text: 'Dismiss',
+                        class: 'btn-confirm',
+                        onClick: () => {
+                            console.log('Alert dismissed');
+                        }
+                    }
+                ]
+            });
+        }
+        
+        // 4. Confirm Modal with Callback
+        function openConfirmModal() {
+            modal.open({
+                title: '❓ Confirm Action',
+                body: `
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">❓</div>
+                        <p style="font-size: 1.1rem;"><strong>Are you sure?</strong></p>
+                        <p>This action will increment the demo counter.</p>
+                        <p style="margin-top: 15px; color: #666;">Current count: ${counter}</p>
+                    </div>
+                `,
+                buttons: [
+                    {
+                        text: 'Cancel',
+                        class: 'btn-cancel',
+                        onClick: () => {
+                            console.log('Action cancelled');
+                        }
+                    },
+                    {
+                        text: 'Confirm',
+                        class: 'btn-confirm',
+                        onClick: () => {
+                            counter++;
+                            updateCounter();
+                            console.log('Action confirmed! Counter incremented.');
+                        }
+                    }
+                ]
+            });
+        }
+        
+        // Add additional modal features - Large Modal example (bonus)
+        function addBonusLargeModal() {
+            // You can call this from console or add another button
+            modal.open({
+                title: '🖼️ Large Gallery Modal',
+                size: 'large',
+                body: `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                        <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 40px; border-radius: 10px; text-align: center; color: white;">
+                            🎨 Image 1
+                        </div>
+                        <div style="background: linear-gradient(135deg, #43e97b, #38f9d7); padding: 40px; border-radius: 10px; text-align: center; color: white;">
+                            🖼️ Image 2
+                        </div>
+                        <div style="background: linear-gradient(135deg, #fa709a, #fee140); padding: 40px; border-radius: 10px; text-align: center; color: white;">
+                            📸 Image 3
+                        </div>
+                    </div>
+                    <p style="margin-top: 20px;">This is a large modal that showcases more content in a grid layout.</p>
+                `,
+                buttons: [
+                    {
+                        text: 'Close',
+                        class: 'btn-confirm',
+                        onClick: () => {
+                            console.log('Large modal closed');
+                        }
+                    }
+                ]
+            });
+        }
+        
+        // Attach event listeners to buttons
+        document.querySelectorAll('[data-modal]').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const modalType = button.getAttribute('data-modal');
+                
+                switch(modalType) {
+                    case 'simple':
+                        openSimpleModal();
+                        break;
+                    case 'form':
+                        openFormModal();
+                        break;
+                    case 'alert':
+                        openAlertModal();
+                        break;
+                    case 'confirm':
+                        openConfirmModal();
+                        break;
+                    default:
+                        openSimpleModal();
+                }
+            });
+        });
+        
+        // Add bonus feature - you can also open large modal via console
+        console.log('🎉 Modal System Ready!');
+        console.log('💡 Try: addBonusLargeModal() to see a large modal');
+        console.log('📋 Features: 4 modal types + dynamic content + callbacks');
+        
+        // Optional: Add keyboard navigation tips
+        const style = document.createElement('style');
+        style.textContent = `
+            .modal-body input:focus, 
+            .modal-body textarea:focus,
+            .modal-footer button:focus {
+                outline: 2px solid #667eea;
+                outline-offset: 2px;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
