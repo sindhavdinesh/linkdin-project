@@ -79,7 +79,7 @@ A fully reusable modal component with multiple triggers and animations.
 - Accessibility considerations
 - State management in modals
 
-[🔗 Github repo](https://your-demo-link.com) | [📂 View Code](./Day-14-Modal-Popup)
+[🔗 Github repo](https://github.com/sindhavdinesh/linkdin-project/tree/main/Modal%20Popup%20System) 
 
 ---
 
