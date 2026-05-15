@@ -14,12 +14,7 @@ Perfect for showcasing a single product with add-to-cart functionality, image ga
 - ✅ Simple and clean UI
 
 ## 🚀 Github repo
-
-
-
-## 📸 Screenshot
-
-> *(Add screenshot of your project here)*
+https://github.com/sindhavdinesh/linkdin-project/tree/main/e-commerce%20product%20page
 
 ## 🛠️ Technologies Used
 
@@ -28,5 +23,3 @@ Perfect for showcasing a single product with add-to-cart functionality, image ga
 - JavaScript (Vanilla)
 - Font Awesome Icons
 - Google Fonts
-
-## 📂 Project Structure
