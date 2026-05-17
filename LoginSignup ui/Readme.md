@@ -10,7 +10,7 @@ A modern, responsive authentication interface with real-time form validation and
 
 ## 🌟 Live Demo
 
-> **[View Live Demo](https://your-github-username.github.io/repo-name/)**  
+> **[View Live Demo](https://github.com/sindhavdinesh/linkdin-project/tree/main/LoginSignup%20ui)**  
 > *Replace with your actual GitHub Pages link after deployment*
 
 ---
