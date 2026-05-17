@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Auth Portal | Login & Signup UI</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, 'Segoe UI', 'Inter', 'Poppins', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      transition: background 0.2s ease;
+    }
+
+    /* main card container */
+    .auth-container {
+      width: 100%;
+      max-width: 480px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(2px);
+      border-radius: 2rem;
+      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+
+    /* tab switching */
+    .tabs {
+      display: flex;
+      background: #f1f5f9;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .tab-btn {
+      flex: 1;
+      text-align: center;
+      padding: 1.2rem 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #475569;
+      letter-spacing: -0.2px;
+    }
+
+    .tab-btn.active {
+      background: white;
+      color: #0f3b5c;
+      border-bottom: 3px solid #3b82f6;
+      box-shadow: 0 -2px 5px rgba(0,0,0,0.02);
+    }
+
+    /* form panels */
+    .form-panel {
+      padding: 2rem 1.8rem 2.2rem;
+      background: white;
+    }
+
+    .hidden-panel {
+      display: none;
+    }
+
+    .input-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+      color: #1e293b;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 1rem;
+      font-size: 1rem;
+      background: #fefefe;
+      transition: all 0.2s;
+      outline: none;
+    }
+
+    .input-group input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+    }
+
+    .input-group input.error-input {
+      border-color: #ef4444;
+      background-color: #fff8f8;
+    }
+
+    .error-msg {
+      font-size: 0.7rem;
+      color: #ef4444;
+      margin-top: 0.3rem;
+      margin-left: 0.3rem;
+      min-height: 1.2rem;
+    }
+
+    /* password wrapper for optional visibility */
+    .password-wrapper {
+      position: relative;
+    }
+
+    .toggle-pw {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      color: #64748b;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: #0f172a;
+      color: white;
+      padding: 0.9rem;
+      border: none;
+      border-radius: 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0.5rem 0 1rem;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .btn-submit:hover {
+      background: #1e293b;
+      transform: translateY(-1px);
+    }
+
+    .demo-note {
+      text-align: center;
+      font-size: 0.75rem;
+      background: #f8fafc;
+      padding: 0.7rem;
+      border-radius: 2rem;
+      margin-top: 1rem;
+      color: #334155;
+      border: 1px solid #e2e8f0;
+    }
+
+    .demo-note span {
+      font-weight: 600;
+      color: #2563eb;
+    }
+
+    hr {
+      margin: 0.5rem 0;
+      border-color: #eef2ff;
+    }
+
+    .status-message {
+      background: #e6f7e6;
+      color: #166534;
+      padding: 0.7rem;
+      border-radius: 1rem;
+      text-align: center;
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+
+    .status-error {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    /* responsiveness */
+    @media (max-width: 500px) {
+      .form-panel {
+        padding: 1.5rem;
+      }
+      .tab-btn {
+        font-size: 1rem;
+        padding: 1rem 0;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="auth-container" id="authApp">
+  <div class="tabs">
+    <button class="tab-btn" data-tab="login">🔐 LOGIN</button>
+    <button class="tab-btn" data-tab="signup">📝 SIGNUP</button>
+  </div>
+
+  <!-- LOGIN FORM -->
+  <div id="loginPanel" class="form-panel">
+    <div id="loginStatus" class="status-message" style="display: none;"></div>
+    <div class="input-group">
+      <label>📧 Email address</label>
+      <input type="email" id="loginEmail" placeholder="hello@example.com" autocomplete="email">
+      <div class="error-msg" id="loginEmailError"></div>
+    </div>
+    <div class="input-group">
+      <label>🔒 Password</label>
+      <div class="password-wrapper">
+        <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password">
+        <button type="button" class="toggle-pw" data-target="loginPassword">👁️</button>
+      </div>
+      <div class="error-msg" id="loginPasswordError"></div>
+    </div>
+    <button class="btn-submit" id="loginBtn">Sign In →</button>
+    <div class="demo-note">
+      💡 Demo: try <span>user@demo.com</span> / <span>pass123</span> (or signup fresh)
+    </div>
+  </div>
+
+  <!-- SIGNUP FORM -->
+  <div id="signupPanel" class="form-panel hidden-panel">
+    <div id="signupStatus" class="status-message" style="display: none;"></div>
+    <div class="input-group">
+      <label>👤 Full name</label>
+      <input type="text" id="signupName" placeholder="Alex Johnson">
+      <div class="error-msg" id="signupNameError"></div>
+    </div>
+    <div class="input-group">
+      <label>📧 Email address</label>
+      <input type="email" id="signupEmail" placeholder="hello@example.com" autocomplete="off">
+      <div class="error-msg" id="signupEmailError"></div>
+    </div>
+    <div class="input-group">
+      <label>🔒 Password</label>
+      <div class="password-wrapper">
+        <input type="password" id="signupPassword" placeholder="Minimum 6 characters">
+        <button type="button" class="toggle-pw" data-target="signupPassword">👁️</button>
+      </div>
+      <div class="error-msg" id="signupPasswordError"></div>
+    </div>
+    <div class="input-group">
+      <label>✓ Confirm password</label>
+      <div class="password-wrapper">
+        <input type="password" id="signupConfirm" placeholder="Retype password">
+        <button type="button" class="toggle-pw" data-target="signupConfirm">👁️</button>
+      </div>
+      <div class="error-msg" id="signupConfirmError"></div>
+    </div>
+    <button class="btn-submit" id="signupBtn">Create Account →</button>
+    <div class="demo-note">
+      🧾 All user data saved in localStorage — accounts persist after refresh.
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------- STORAGE KEYS ----------
+  const USERS_KEY = 'auth_users_db';      // array of { name, email, password }
+  const CURRENT_SESSION_KEY = 'auth_active_session';  // stores logged in user email
+
+  // ---------- UTILITIES ----------
+  function getUsers() {
+    const stored = localStorage.getItem(USERS_KEY);
+    if (!stored) return [];
+    try {
+      return JSON.parse(stored);
+    } catch(e) {
+      return [];
+    }
+  }
+
+  function saveUsers(users) {
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  }
+
+  // register / signup new user
+  function registerUser(name, email, password) {
+    let users = getUsers();
+    // check existing email (case-insensitive)
+    const exists = users.some(user => user.email.toLowerCase() === email.toLowerCase());
+    if (exists) return { success: false, message: 'Email already registered. Try login.' };
+    
+    const newUser = {
+      id: Date.now(),
+      name: name.trim(),
+      email: email.toLowerCase().trim(),
+      password: password   // stored as plain for demo purpose (industry level would hash)
+    };
+    users.push(newUser);
+    saveUsers(users);
+    return { success: true, message: 'Account created! You can now login.' };
+  }
+
+  // login validation
+  function loginUser(email, password) {
+    const users = getUsers();
+    const matchedUser = users.find(user => user.email.toLowerCase() === email.toLowerCase() && user.password === password);
+    if (matchedUser) {
+      // store session (simulate logged in user)
+      localStorage.setItem(CURRENT_SESSION_KEY, matchedUser.email);
+      return { success: true, user: matchedUser };
+    }
+    return { success: false, message: 'Invalid email or password.' };
+  }
+
+  // clear any global status after a short time, but we handle UI manually
+  function setStatusMessage(panel, message, isError = false) {
+    const container = panel === 'login' ? document.getElementById('loginStatus') : document.getElementById('signupStatus');
+    if (!container) return;
+    container.textContent = message;
+    container.style.display = 'block';
+    if (isError) {
+      container.classList.add('status-error');
+    } else {
+      container.classList.remove('status-error');
+    }
+    // auto hide after 3.5 seconds
+    setTimeout(() => {
+      if (container) {
+        container.style.display = 'none';
+        container.classList.remove('status-error');
+      }
+    }, 3500);
+  }
+
+  function clearFieldErrors(panelType) {
+    if (panelType === 'login') {
+      document.getElementById('loginEmailError').innerText = '';
+      document.getElementById('loginPasswordError').innerText = '';
+      document.getElementById('loginEmail').classList.remove('error-input');
+      document.getElementById('loginPassword').classList.remove('error-input');
+    } else {
+      document.getElementById('signupNameError').innerText = '';
+      document.getElementById('signupEmailError').innerText = '';
+      document.getElementById('signupPasswordError').innerText = '';
+      document.getElementById('signupConfirmError').innerText = '';
+      document.getElementById('signupName').classList.remove('error-input');
+      document.getElementById('signupEmail').classList.remove('error-input');
+      document.getElementById('signupPassword').classList.remove('error-input');
+      document.getElementById('signupConfirm').classList.remove('error-input');
+    }
+  }
+
+  // ----- realtime validation helpers (for live feedback, but we also validate on submit)
+  function validateLoginForm(email, password) {
+    let isValid = true;
+    let emailErr = '', passErr = '';
+    
+    if (!email.trim()) {
+      emailErr = 'Email is required';
+      isValid = false;
+    } else if (!/^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/i.test(email)) {
+      emailErr = 'Enter a valid email (e.g., name@domain.com)';
+      isValid = false;
+    }
+    
+    if (!password) {
+      passErr = 'Password cannot be empty';
+      isValid = false;
+    } else if (password.length < 3) {
+      passErr = 'Password must be at least 3 characters';
+      isValid = false;
+    }
+    
+    document.getElementById('loginEmailError').innerText = emailErr;
+    document.getElementById('loginPasswordError').innerText = passErr;
+    const emailInput = document.getElementById('loginEmail');
+    const passInput = document.getElementById('loginPassword');
+    if(emailErr) emailInput.classList.add('error-input'); else emailInput.classList.remove('error-input');
+    if(passErr) passInput.classList.add('error-input'); else passInput.classList.remove('error-input');
+    
+    return isValid;
+  }
+  
+  function validateSignupForm(name, email, password, confirm) {
+    let isValid = true;
+    let nameErr = '', emailErr = '', passErr = '', confirmErr = '';
+    
+    if (!name.trim()) {
+      nameErr = 'Full name is required';
+      isValid = false;
+    } else if (name.trim().length < 2) {
+      nameErr = 'Name must be at least 2 characters';
+      isValid = false;
+    }
+    
+    if (!email.trim()) {
+      emailErr = 'Email address required';
+      isValid = false;
+    } else if (!/^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/i.test(email)) {
+      emailErr = 'Invalid email format';
+      isValid = false;
+    }
+    
+    if (!password) {
+      passErr = 'Password is required';
+      isValid = false;
+    } else if (password.length < 6) {
+      passErr = 'Password must be at least 6 characters';
+      isValid = false;
+    }
+    
+    if (password !== confirm) {
+      confirmErr = 'Passwords do not match';
+      isValid = false;
+    } else if (confirm && password.length >= 6 && password !== confirm) {
+      confirmErr = 'Passwords do not match';
+      isValid = false;
+    } else if (!confirm && password) {
+      confirmErr = 'Please confirm your password';
+      isValid = false;
+    }
+    
+    document.getElementById('signupNameError').innerText = nameErr;
+    document.getElementById('signupEmailError').innerText = emailErr;
+    document.getElementById('signupPasswordError').innerText = passErr;
+    document.getElementById('signupConfirmError').innerText = confirmErr;
+    
+    const nameInp = document.getElementById('signupName');
+    const emailInp = document.getElementById('signupEmail');
+    const passInp = document.getElementById('signupPassword');
+    const confInp = document.getElementById('signupConfirm');
+    
+    if(nameErr) nameInp.classList.add('error-input'); else nameInp.classList.remove('error-input');
+    if(emailErr) emailInp.classList.add('error-input'); else emailInp.classList.remove('error-input');
+    if(passErr) passInp.classList.add('error-input'); else passInp.classList.remove('error-input');
+    if(confirmErr) confInp.classList.add('error-input'); else confInp.classList.remove('error-input');
+    
+    return isValid;
+  }
+  
+  // ----- core event handlers -----
+  function handleLogin() {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    
+    clearFieldErrors('login');
+    const isValid = validateLoginForm(email, password);
+    if (!isValid) {
+      setStatusMessage('login', 'Please fix errors above.', true);
+      return;
+    }
+    
+    const result = loginUser(email, password);
+    if (result.success) {
+      setStatusMessage('login', `✅ Welcome back, ${result.user.name || result.user.email}! Redirecting view…`, false);
+      // Show success and simulate logged in state (we can change UI or just show a message)
+      // But since this is an auth UI demo, we can also add a minimal "logged in" indicator.
+      // Add an extra overlay message but stay on same UI to see account data persistence.
+      // In a real app, you would route. Here we reset fields and show success status.
+      // Also display session note.
+      setTimeout(() => {
+        alert(`🔓 Successfully logged in as ${result.user.email}\n( session saved in localStorage )`);
+        // optional: you could clear password fields for security
+        document.getElementById('loginPassword').value = '';
+      }, 200);
+    } else {
+      setStatusMessage('login', result.message || 'Login failed', true);
+      document.getElementById('loginPassword').classList.add('error-input');
+      document.getElementById('loginPasswordError').innerText = result.message || 'Invalid credentials';
+    }
+  }
+  
+  function handleSignup() {
+    const name = document.getElementById('signupName').value;
+    const email = document.getElementById('signupEmail').value;
+    const password = document.getElementById('signupPassword').value;
+    const confirm = document.getElementById('signupConfirm').value;
+    
+    clearFieldErrors('signup');
+    const isValid = validateSignupForm(name, email, password, confirm);
+    if (!isValid) {
+      setStatusMessage('signup', 'Please correct the highlighted fields.', true);
+      return;
+    }
+    
+    const regResult = registerUser(name, email, password);
+    if (regResult.success) {
+      setStatusMessage('signup', regResult.message, false);
+      // reset signup form fields after success (optional)
+      document.getElementById('signupName').value = '';
+      document.getElementById('signupEmail').value = '';
+      document.getElementById('signupPassword').value = '';
+      document.getElementById('signupConfirm').value = '';
+      // clear any old errors styles
+      clearFieldErrors('signup');
+      // after 1 sec, auto switch to login tab for better UX
+      setTimeout(() => {
+        // trigger tab switch programmatically
+        const loginTabBtn = document.querySelector('.tab-btn[data-tab="login"]');
+        if (loginTabBtn) loginTabBtn.click();
+        setStatusMessage('login', '✨ Account created! Please login.', false);
+      }, 1500);
+    } else {
+      setStatusMessage('signup', regResult.message, true);
+      document.getElementById('signupEmail').classList.add('error-input');
+      document.getElementById('signupEmailError').innerText = regResult.message;
+    }
+  }
+  
+  // ----- Toggle password visibility (multiple)
+  function setupPasswordToggles() {
+    const toggleButtons = document.querySelectorAll('.toggle-pw');
+    toggleButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const targetId = btn.getAttribute('data-target');
+        const inputField = document.getElementById(targetId);
+        if (inputField) {
+          const type = inputField.getAttribute('type') === 'password' ? 'text' : 'password';
+          inputField.setAttribute('type', type);
+          btn.textContent = type === 'password' ? '👁️' : '🙈';
+        }
+      });
+    });
+  }
+  
+  // ----- Tab switching logic (Login/Signup)
+  function initTabs() {
+    const tabs = document.querySelectorAll('.tab-btn');
+    const loginPanel = document.getElementById('loginPanel');
+    const signupPanel = document.getElementById('signupPanel');
+    
+    function setActiveTab(tabId) {
+      tabs.forEach(tab => {
+        if (tab.getAttribute('data-tab') === tabId) {
+          tab.classList.add('active');
+        } else {
+          tab.classList.remove('active');
+        }
+      });
+      if (tabId === 'login') {
+        loginPanel.classList.remove('hidden-panel');
+        signupPanel.classList.add('hidden-panel');
+        // reset status messages for login panel only, keep fresh
+        const loginStatusDiv = document.getElementById('loginStatus');
+        if (loginStatusDiv) loginStatusDiv.style.display = 'none';
+      } else {
+        loginPanel.classList.add('hidden-panel');
+        signupPanel.classList.remove('hidden-panel');
+        const signupStatusDiv = document.getElementById('signupStatus');
+        if (signupStatusDiv) signupStatusDiv.style.display = 'none';
+      }
+    }
+    
+    tabs.forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        const tabVal = tab.getAttribute('data-tab');
+        setActiveTab(tabVal);
+        // Clear any leftover errors on active panel fields
+        if (tabVal === 'login') {
+          clearFieldErrors('login');
+          document.getElementById('loginStatus').style.display = 'none';
+        } else {
+          clearFieldErrors('signup');
+          document.getElementById('signupStatus').style.display = 'none';
+        }
+      });
+    });
+    // default active login
+    setActiveTab('login');
+  }
+  
+  // optional realtime validation improvements: validate on input (non intrusive, just remove error style on typing)
+  function attachLiveCleanup() {
+    const loginEmail = document.getElementById('loginEmail');
+    const loginPass = document.getElementById('loginPassword');
+    const signupName = document.getElementById('signupName');
+    const signupEmail = document.getElementById('signupEmail');
+    const signupPass = document.getElementById('signupPassword');
+    const signupConfirm = document.getElementById('signupConfirm');
+    
+    const clearErrorOnInput = (inputElem, errorElemId) => {
+      inputElem.addEventListener('input', () => {
+        inputElem.classList.remove('error-input');
+        const errorSpan = document.getElementById(errorElemId);
+        if (errorSpan) errorSpan.innerText = '';
+      });
+    };
+    if (loginEmail) clearErrorOnInput(loginEmail, 'loginEmailError');
+    if (loginPass) clearErrorOnInput(loginPass, 'loginPasswordError');
+    if (signupName) clearErrorOnInput(signupName, 'signupNameError');
+    if (signupEmail) clearErrorOnInput(signupEmail, 'signupEmailError');
+    if (signupPass) clearErrorOnInput(signupPass, 'signupPasswordError');
+    if (signupConfirm) clearErrorOnInput(signupConfirm, 'signupConfirmError');
+  }
+  
+  // initial load: prefill with test user for demo? Not mandatory, but we can add a demo user if DB empty
+  function seedDemoUserIfEmpty() {
+    const users = getUsers();
+    if (users.length === 0) {
+      const demoUser = {
+        id: 1001,
+        name: 'Demo User',
+        email: 'user@demo.com',
+        password: 'pass123'
+      };
+      users.push(demoUser);
+      saveUsers(users);
+    }
+  }
+  
+  // On page load, optionally check if any session exists but we don't auto-login; but we can show message
+  // Also add event listeners
+  function bindEvents() {
+    document.getElementById('loginBtn').addEventListener('click', handleLogin);
+    document.getElementById('signupBtn').addEventListener('click', handleSignup);
+    // allow enter key submit (basic)
+    const loginPasswordField = document.getElementById('loginPassword');
+    const signupConfirmField = document.getElementById('signupConfirm');
+    if (loginPasswordField) {
+      loginPasswordField.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleLogin();
+      });
+    }
+    const loginEmailField = document.getElementById('loginEmail');
+    if (loginEmailField) {
+      loginEmailField.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleLogin();
+      });
+    }
+    const signupFields = ['signupName', 'signupEmail', 'signupPassword', 'signupConfirm'];
+    signupFields.forEach(fieldId => {
+      const field = document.getElementById(fieldId);
+      if (field) {
+        field.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') handleSignup();
+        });
+      }
+    });
+  }
+  
+  function init() {
+    seedDemoUserIfEmpty();
+    initTabs();
+    setupPasswordToggles();
+    attachLiveCleanup();
+    bindEvents();
+  }
+  
+  init();
+</script>
+</body>
+</html>
