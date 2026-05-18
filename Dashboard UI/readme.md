@@ -11,7 +11,7 @@
 
 ## 🌟 Live Demo
 
-🔗 **View Project:** [Click Here for Live Demo](https://your-username.github.io/repo-name/)
+🔗 **View Project:** [Click Here for Live Demo](https://github.com/sindhavdinesh/linkdin-project/tree/main/Dashboard%20UI)
 
 ---
 
