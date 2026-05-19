@@ -1,4 +1,4 @@
-# 📖 Blogui – Dynamic Blog UI
+# 📖 Blog UI – Dynamic Blog UI
 
 > **Day 19 – 21 Days Frontend Challenge**  
 > *A fully dynamic blog page where posts are rendered from JavaScript data with search, category filtering, pagination, dark mode, and localStorage persistence.*
@@ -21,8 +21,11 @@ Build a **professional blog UI** where blog posts are dynamically rendered from 
 
 ---
 
-## Project Repo link
-**link** = ()
+## 🔗 Project Repository
+
+**GitHub Repo:** [https://github.com/sindhavdinesh/linkdin-project/tree/main/Blog%20Ui](https://github.com/sindhavdinesh/linkdin-project/tree/main/Blog%20Ui)
+
+---
 
 ## ✨ Features
 
@@ -42,3 +45,18 @@ Build a **professional blog UI** where blog posts are dynamically rendered from 
 ---
 
 ## 🛠️ Technologies Used
+
+| Technology | Purpose |
+|------------|---------|
+| **HTML5** | Semantic structure, modern elements |
+| **CSS3** | Flexbox, Grid, custom dark theme, transitions, animations, responsive design |
+| **JavaScript (ES6+)** | DOM manipulation, event handling, filters, pagination logic, localStorage API |
+| **Google Fonts (Poppins)** | Modern, clean typography |
+| **Lorem Picsum** | Dynamic placeholder images for blog cards |
+
+### No external frameworks or libraries – 100% vanilla implementation ✅
+
+---
+
+## 📁 Project Structure
+
