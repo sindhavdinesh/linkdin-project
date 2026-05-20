@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>FlixVault | Netflix-style Movie Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0a;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    /* custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1f1f1f;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #e50914;
+      border-radius: 10px;
+    }
+
+    /* navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.85) 100%);
+      backdrop-filter: blur(12px);
+      padding: 1rem 4%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 1px solid rgba(229, 9, 20, 0.3);
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, #e50914, #ff4d4d);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .logo i {
+      background: none;
+      color: #e50914;
+      margin-right: 6px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      font-weight: 500;
+    }
+    .nav-links a {
+      color: #e5e5e5;
+      text-decoration: none;
+      transition: 0.2s;
+      font-size: 0.95rem;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: #e50914;
+    }
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,0.1);
+      border-radius: 40px;
+      padding: 0.4rem 1rem;
+      border: 1px solid #333;
+    }
+    .search-box i {
+      color: #aaa;
+    }
+    .search-box input {
+      background: transparent;
+      border: none;
+      padding: 0.4rem 0.6rem;
+      color: white;
+      outline: none;
+      width: 180px;
+      font-size: 0.85rem;
+    }
+    .search-box input::placeholder {
+      color: #aaa;
+    }
+
+    /* hero banner */
+    .hero {
+      position: relative;
+      height: 75vh;
+      min-height: 480px;
+      background-size: cover;
+      background-position: top 20% center;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 4% 4rem;
+      margin-bottom: 2rem;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, #0a0a0a 10%, transparent 80%);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 600px;
+    }
+    .hero-content h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .btn {
+      padding: 0.65rem 2rem;
+      border-radius: 6px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-primary {
+      background: #e50914;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #b80710;
+      transform: scale(1.02);
+    }
+    .btn-secondary {
+      background: rgba(109, 109, 110, 0.7);
+      color: white;
+    }
+    .btn-secondary:hover {
+      background: rgba(80, 80, 80, 0.9);
+    }
+
+    /* sections */
+    .section {
+      padding: 2rem 4%;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .section-header h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .carousel {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding-bottom: 1rem;
+      scrollbar-width: thin;
+    }
+    .carousel::-webkit-scrollbar {
+      height: 5px;
+    }
+    .movie-card {
+      flex: 0 0 200px;
+      background: #1a1a1a;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.2s;
+      cursor: pointer;
+      border: 1px solid #2c2c2c;
+    }
+    .movie-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+    }
+    .movie-poster {
+      width: 100%;
+      height: 280px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .rating-badge {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      padding: 4px 8px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: bold;
+      color: #ffd966;
+    }
+    .movie-info {
+      padding: 0.8rem;
+    }
+    .movie-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .movie-year {
+      font-size: 0.7rem;
+      color: #aaa;
+      margin-top: 4px;
+    }
+
+    /* dashboard stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin: 1rem 0 2rem;
+    }
+    .stat-card {
+      background: #111;
+      border-radius: 20px;
+      padding: 1.2rem;
+      text-align: center;
+      border: 1px solid #2a2a2a;
+      transition: 0.2s;
+    }
+    .stat-card i {
+      font-size: 2rem;
+      color: #e50914;
+      margin-bottom: 0.5rem;
+    }
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 800;
+    }
+    .stat-label {
+      color: #aaa;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+    }
+
+    /* modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #141414;
+      max-width: 600px;
+      width: 90%;
+      border-radius: 20px;
+      overflow: hidden;
+      animation: fadeUp 0.3s ease;
+    }
+    @keyframes fadeUp {
+      from { transform: translateY(40px); opacity: 0;}
+      to { transform: translateY(0); opacity: 1;}
+    }
+    .modal-poster {
+      height: 280px;
+      background-size: cover;
+      position: relative;
+    }
+    .modal-body {
+      padding: 1.8rem;
+    }
+    .modal-body h3 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+    .modal-meta {
+      display: flex;
+      gap: 1rem;
+      color: #bbb;
+      margin: 0.8rem 0;
+    }
+    .close-modal {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 2rem;
+      cursor: pointer;
+      color: white;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid #222;
+      margin-top: 2rem;
+      font-size: 0.8rem;
+      color: #888;
+    }
+
+    @media (max-width: 780px) {
+      .hero-content h1 { font-size: 2rem; }
+      .navbar { flex-direction: column; align-items: stretch; }
+      .search-box input { width: 100%; }
+      .movie-card { flex: 0 0 150px; }
+      .movie-poster { height: 220px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo">
+    <i class="fas fa-film"></i> FlixVault
+  </div>
+  <div class="nav-links">
+    <a href="#" class="active" data-nav="home">Home</a>
+    <a href="#" data-nav="movies">Movies</a>
+    <a href="#" data-nav="tvshows">TV Shows</a>
+    <a href="#" data-nav="mylist">My List</a>
+  </div>
+  <div class="search-box">
+    <i class="fas fa-search"></i>
+    <input type="text" id="searchInput" placeholder="Titles, genres, actors...">
+  </div>
+</div>
+
+<!-- HERO BANNER (dynamic) -->
+<div id="heroContainer"></div>
+
+<!-- DASHBOARD STATS SECTION -->
+<div class="section">
+  <div class="stats-row" id="statsRow">
+    <!-- injected via js -->
+  </div>
+</div>
+
+<!-- MOVIE SECTIONS (Trending, Top Rated, Recommended) -->
+<div id="movieSectionsContainer"></div>
+
+<!-- MODAL -->
+<div id="movieModal" class="modal">
+  <span class="close-modal">&times;</span>
+  <div class="modal-content" id="modalContent">
+    <!-- dynamic content -->
+  </div>
+</div>
+
+<footer>
+  <p>© 2025 FlixVault — immersive movie dashboard | Netflix-style clone project</p>
+  <p style="margin-top: 6px;"><i class="fas fa-fire"></i> Real-time search & category filtering | Add to My List (localStorage)</p>
+</footer>
+
+<script>
+  // -------------------- MOVIE DATABASE (industry-like) --------------------
+  const movieDatabase = [
+    { id: 1, title: "Stranger Things", year: 2022, rating: 8.7, category: "TV Show", genre: "Sci-Fi", poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_mW979lUTEL54uGvTDrYFAzXtBpgsE-wimg&s", backdrop: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTa2iquS81wtE57ERqa_oVuj-3i-r4fbLjdbw&s", overview: "A group of kids uncover supernatural mysteries in Hawkins, Indiana. Nostalgic and thrilling." },
+    { id: 2, title: "The Dark Knight", year: 2008, rating: 9.0, category: "Movie", genre: "Action", poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCpnwK7qXA7PJFwlB_pWedDRfQVFLHAuqxvw&s", backdrop: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjJLbGHYS63vQdVkDqMFSXD5PpxVZqE1lgGQ&s", overview: "Batman faces the Joker, chaos engulfs Gotham. Masterpiece of superhero cinema." },
+    { id: 3, title: "Arcane", year: 2021, rating: 9.1, category: "TV Show", genre: "Animation", poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHWEWhfQ0V7qiJkiROGKzvcQ2qGfBj1t8SEA&s", backdrop: "https://images.wallpapersden.com/image/download/netflix-arcane-hd_bWVqbG2UmZqaraWkpJRmbmdlrWZlbWU.jpg", overview: "League of Legends animated series with stunning visuals and deep story." },
+    { id: 4, title: "Inception", year: 2010, rating: 8.8, category: "Movie", genre: "Sci-Fi", poster: "https://res.cloudinary.com/jerrick/image/upload/d_642250b563292b35f27461a7.png,f_jpg,fl_progressive,q_auto,w_1024/64865f6f9eec37001dad29f5.jpg", backdrop: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_A3zsAiLO4MoGb62PkBL8Yg2UYz7Z5wkK4g&s", overview: "Dream thieves infiltrate minds. Nolan's mind-bending masterpiece." },
+    { id: 5, title: "The Witcher", year: 2019, rating: 8.2, category: "TV Show", genre: "Fantasy", poster: "https://resizing.flixster.com/V7RfPDIpiqZs0y89oCDRUs8dELw=/fit-in/705x460/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p17580186_i_v9_ad.jpg", backdrop: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsYncAx-v7Fn8hmUq56l6jfIP8zru9JtDG0w&s", overview: "Geralt of Rivia, a mutated monster hunter, fights destiny." },
+    { id: 6, title: "Spider-Man: No Way Home", year: 2021, rating: 8.6, category: "Movie", genre: "Action", poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSw0CXcncUdzyGZNpHN1AOR9T1WY8ywVxu8hA&s", backdrop: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgbYvHmXMZodtQ2l7yqmgXHtyCDADvIbOQhA&s", overview: "Multiverse chaos brings iconic villains and heroes together." },
+    { id: 7, title: "Breaking Bad", year: 2008, rating: 9.5, category: "TV Show", genre: "Drama", poster: "https://m.media-amazon.com/images/M/MV5BMTJiMzgwZTktYzZhZC00YzhhLWEzZDUtMGM2NTE4MzQ4NGFmXkEyXkFqcGdeQWpybA@@._V1_QL75_UX500_CR0,0,500,281_.jpg", backdrop: "https://images7.alphacoders.com/617/thumb-1920-617964.jpg", overview: "A high school teacher turns into a ruthless drug lord." },
+    { id: 8, title: "Dune", year: 2021, rating: 8.1, category: "Movie", genre: "Sci-Fi", poster: "https://m.media-amazon.com/images/M/MV5BMDA2MDVmNWItODA3My00Mzc2LThmODMtMThhYTVlMGJkYjA4XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg", backdrop: "https://images.hdqwalls.com/download/2024-dune-part-two-4k-movie-dr-1366x768.jpg", overview: "Epic adaptation of Frank Herbert's sci-fi saga." },
+    { id: 9, title: "Money Heist", year: 2017, rating: 8.2, category: "TV Show", genre: "Thriller", poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQX4ijChejP6Njj-bI8DmOlcAj9Kd8kFWgyPA&s", backdrop: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwZn3gwclfU34soEqcwOBwrmrfua0ET5wjRw&s", overview: "The Professor plans the biggest heist in recorded history." },
+    { id: 10, title: "John Wick 4", year: 2023, rating: 8.3, category: "Movie", genre: "Action", poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRz99jF-YBysKjO3nbtSBoCWBx2MQea3hkOkA&s", backdrop: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZHKe2p_5vekwW26_iLgWo58OUR1xlQ2A6ag&s", overview: "Unstoppable assassin seeks freedom. breathtaking action." }
+  ];
+
+  // myList persistence (localStorage)
+  let myList = JSON.parse(localStorage.getItem('flixvault_mylist')) || [];
+  
+  function saveMyList() {
+    localStorage.setItem('flixvault_mylist', JSON.stringify(myList));
+  }
+
+  function isInMyList(id) {
+    return myList.some(item => item.id === id);
+  }
+
+  function addToMyList(movie) {
+    if (!isInMyList(movie.id)) {
+      myList.push(movie);
+      saveMyList();
+      updateStatsAndUI();
+    }
+  }
+
+  function removeFromMyList(id) {
+    myList = myList.filter(m => m.id !== id);
+    saveMyList();
+    updateStatsAndUI();
+  }
+
+  // global active filter state: "home", "movies", "tvshows", "mylist"
+  let currentNav = "home";
+  let searchQuery = "";
+
+  // helper: filter by nav + search
+  function getFilteredMovies() {
+    let filtered = [...movieDatabase];
+    // nav filter
+    if (currentNav === "movies") filtered = filtered.filter(m => m.category === "Movie");
+    else if (currentNav === "tvshows") filtered = filtered.filter(m => m.category === "TV Show");
+    else if (currentNav === "mylist") filtered = filtered.filter(m => isInMyList(m.id));
+    // search
+    if (searchQuery.trim() !== "") {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(m => m.title.toLowerCase().includes(q) || m.genre.toLowerCase().includes(q));
+    }
+    return filtered;
+  }
+
+  // group movies for carousels: we'll show "Trending Now", "Top Rated", "Recommended For You"
+  // For simplicity, build sections using same dataset but different sorting/filtering
+  function getTrending() { return [...movieDatabase].sort((a,b) => b.rating - a.rating).slice(0,6); }
+  function getTopRated() { return [...movieDatabase].sort((a,b) => b.rating - a.rating).slice(0,8); }
+  function getRecommendations() {
+    if (myList.length > 0) {
+      const favGenres = [...new Set(myList.map(m => m.genre))];
+      let recs = movieDatabase.filter(m => favGenres.includes(m.genre) && !isInMyList(m.id));
+      return recs.length ? recs.slice(0,6) : movieDatabase.slice(0,6);
+    }
+    return movieDatabase.slice(0,6);
+  }
+
+  // stats: total movies, total shows, myList count
+  function updateStats() {
+    const totalMovies = movieDatabase.filter(m => m.category === "Movie").length;
+    const totalShows = movieDatabase.filter(m => m.category === "TV Show").length;
+    const myListCount = myList.length;
+    document.getElementById("statsRow").innerHTML = `
+      <div class="stat-card"><i class="fas fa-film"></i><div class="stat-number">${totalMovies}</div><div class="stat-label">Movies</div></div>
+      <div class="stat-card"><i class="fas fa-tv"></i><div class="stat-number">${totalShows}</div><div class="stat-label">TV Shows</div></div>
+      <div class="stat-card"><i class="fas fa-bookmark"></i><div class="stat-number">${myListCount}</div><div class="stat-label">My List</div></div>
+      <div class="stat-card"><i class="fas fa-star"></i><div class="stat-number">${movieDatabase.length}</div><div class="stat-label">Total Titles</div></div>
+    `;
+  }
+
+  // render hero based on random trending movie
+  function renderHero() {
+    const trending = getTrending();
+    const heroMovie = trending[0];
+    if (!heroMovie) return;
+    const heroHtml = `
+      <div class="hero" style="background-image: url('${heroMovie.backdrop}');">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <h1>${heroMovie.title}</h1>
+          <div style="display: flex; gap: 10px; margin-bottom: 0.5rem;"><span>⭐ ${heroMovie.rating}</span><span>${heroMovie.year}</span><span>${heroMovie.genre}</span></div>
+          <p style="max-width: 550px;">${heroMovie.overview.substring(0, 120)}...</p>
+          <div class="hero-buttons">
+            <button class="btn btn-primary" data-movie-id="${heroMovie.id}"><i class="fas fa-play"></i> Play Now</button>
+            <button class="btn btn-secondary" data-movie-id="${heroMovie.id}" data-addlist="true"><i class="fas fa-plus"></i> My List</button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.getElementById("heroContainer").innerHTML = heroHtml;
+    document.querySelectorAll("[data-movie-id]").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const id = parseInt(btn.getAttribute("data-movie-id"));
+        const movie = movieDatabase.find(m => m.id === id);
+        if (btn.hasAttribute("data-addlist")) {
+          if (!isInMyList(movie.id)) addToMyList(movie);
+          else removeFromMyList(movie.id);
+          updateStatsAndUI();
+          renderHero(); // refresh hero button states
+        } else {
+          openModal(movie);
+        }
+      });
+    });
+  }
+
+  // render carousel sections (trending, top rated, recommendations)
+  function renderSections() {
+    const trending = getTrending();
+    const topRated = getTopRated();
+    const recommendations = getRecommendations();
+    const sectionHTML = `
+      <div class="section">
+        <div class="section-header"><h2><i class="fas fa-chart-line"></i> Trending Now</h2><span style="font-size:0.8rem;">🔥 Most watched</span></div>
+        <div class="carousel" id="carousel-trending">${generateCarouselItems(trending)}</div>
+      </div>
+      <div class="section">
+        <div class="section-header"><h2><i class="fas fa-trophy"></i> Top Rated</h2><span>Critics' choice</span></div>
+        <div class="carousel" id="carousel-toprated">${generateCarouselItems(topRated)}</div>
+      </div>
+      <div class="section">
+        <div class="section-header"><h2><i class="fas fa-user-check"></i> Recommended For You</h2><span>Based on your taste</span></div>
+        <div class="carousel" id="carousel-rec">${generateCarouselItems(recommendations)}</div>
+      </div>
+    `;
+    document.getElementById("movieSectionsContainer").innerHTML = sectionHTML;
+    attachCardEvents();
+  }
+
+  function generateCarouselItems(movies) {
+    if (!movies.length) return `<div style="padding:1rem; color:#aaa;">No titles found</div>`;
+    return movies.map(movie => `
+      <div class="movie-card" data-id="${movie.id}">
+        <div class="movie-poster" style="background-image: url('${movie.poster}');">
+          <div class="rating-badge"><i class="fas fa-star"></i> ${movie.rating}</div>
+        </div>
+        <div class="movie-info">
+          <div class="movie-title">${escapeHtml(movie.title)}</div>
+          <div class="movie-year">${movie.year} • ${movie.genre}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function attachCardEvents() {
+    document.querySelectorAll('.movie-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const id = parseInt(card.getAttribute('data-id'));
+        const movie = movieDatabase.find(m => m.id === id);
+        if (movie) openModal(movie);
+      });
+    });
+  }
+
+  // modal with dynamic + mylist toggle
+  function openModal(movie) {
+    const inList = isInMyList(movie.id);
+    const modalHtml = `
+      <div class="modal-poster" style="background-image: url('${movie.backdrop}');"></div>
+      <div class="modal-body">
+        <h3>${escapeHtml(movie.title)}</h3>
+        <div class="modal-meta"><span>${movie.year}</span> <span>⭐ ${movie.rating}</span> <span>${movie.genre}</span> <span>${movie.category}</span></div>
+        <p>${movie.overview}</p>
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+          <button class="btn btn-primary" id="modalPlayBtn"><i class="fas fa-play"></i> Play</button>
+          <button class="btn btn-secondary" id="modalListBtn">${inList ? '<i class="fas fa-check"></i> Remove from List' : '<i class="fas fa-plus"></i> Add to My List'}</button>
+        </div>
+      </div>
+    `;
+    document.getElementById("modalContent").innerHTML = modalHtml;
+    document.getElementById("movieModal").style.display = "flex";
+    document.getElementById("modalPlayBtn").addEventListener("click", () => {
+      alert(`🎬 Playing "${movie.title}" (demo mode — streaming experience)`);
+    });
+    const listBtn = document.getElementById("modalListBtn");
+    listBtn.addEventListener("click", () => {
+      if (isInMyList(movie.id)) {
+        removeFromMyList(movie.id);
+      } else {
+        addToMyList(movie);
+      }
+      updateStatsAndUI();
+      if (currentNav === "mylist") renderDynamicNavContent();
+      openModal(movie); // refresh modal with updated state
+    });
+  }
+
+  // dynamic rendering based on currentNav & search (used for myList and filtered views)
+  function renderDynamicNavContent() {
+    if (currentNav === "home") {
+      renderHero();
+      renderSections();
+      updateStats();
+    } else {
+      // for movies / tvshows / mylist, replace sections with a grid layout
+      let filtered = getFilteredMovies();
+      let sectionTitle = "";
+      if (currentNav === "movies") sectionTitle = "Movies Collection";
+      else if (currentNav === "tvshows") sectionTitle = "TV Series";
+      else if (currentNav === "mylist") sectionTitle = "My Personal List";
+      const gridHTML = `
+        <div class="section">
+          <div class="section-header"><h2><i class="fas fa-list-ul"></i> ${sectionTitle} (${filtered.length})</h2></div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 1.5rem;" id="dynamicGrid">
+            ${filtered.map(movie => `
+              <div class="movie-card" data-id="${movie.id}">
+                <div class="movie-poster" style="background-image: url('${movie.poster}'); height:260px;"><div class="rating-badge">⭐ ${movie.rating}</div></div>
+                <div class="movie-info"><div class="movie-title">${escapeHtml(movie.title)}</div><div class="movie-year">${movie.year}</div></div>
+              </div>
+            `).join('')}
+          </div>
+          ${filtered.length === 0 ? '<div style="text-align:center; padding:3rem;">No results found 🔍</div>' : ''}
+        </div>
+      `;
+      document.getElementById("movieSectionsContainer").innerHTML = gridHTML;
+      attachCardEvents();
+      // hide hero section when not home
+      document.getElementById("heroContainer").innerHTML = currentNav === "home" ? renderHero : `<div style="height: 10px;"></div>`;
+      if(currentNav !== "home") document.getElementById("heroContainer").innerHTML = `<div style="height:20px;"></div>`;
+      updateStats();
+    }
+  }
+
+  function updateStatsAndUI() {
+    updateStats();
+    if (currentNav === "home") {
+      renderHero();
+      renderSections();
+    } else {
+      renderDynamicNavContent();
+    }
+  }
+
+  // search & nav event bindings
+  function initEvents() {
+    const searchInput = document.getElementById("searchInput");
+    searchInput.addEventListener("input", (e) => {
+      searchQuery = e.target.value;
+      if (currentNav === "home") {
+        // if home and search active, we switch to filtered search mode (better UX)
+        currentNav = "search";
+        renderDynamicNavContent();
+      } else {
+        renderDynamicNavContent();
+      }
+    });
+    document.querySelectorAll("[data-nav]").forEach(link => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const navVal = link.getAttribute("data-nav");
+        if (navVal === "home") currentNav = "home";
+        else if (navVal === "movies") currentNav = "movies";
+        else if (navVal === "tvshows") currentNav = "tvshows";
+        else if (navVal === "mylist") currentNav = "mylist";
+        searchQuery = "";
+        document.getElementById("searchInput").value = "";
+        renderDynamicNavContent();
+        // update active style
+        document.querySelectorAll("[data-nav]").forEach(a => a.classList.remove("active"));
+        link.classList.add("active");
+      });
+    });
+    // close modal
+    document.querySelector(".close-modal").addEventListener("click", () => {
+      document.getElementById("movieModal").style.display = "none";
+    });
+    window.addEventListener("click", (e) => {
+      if (e.target === document.getElementById("movieModal")) document.getElementById("movieModal").style.display = "none";
+    });
+  }
+
+  function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+  // bootstrap
+  function init() {
+    initEvents();
+    renderDynamicNavContent();
+  }
+  init();
+</script>
+</body>
+</html>
