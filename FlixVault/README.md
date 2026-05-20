@@ -43,7 +43,7 @@
 
 ```bash
 # Step 1: Clone karo
-github-link https://github.com/YOUR_USERNAME/FlixVault.git
+github-link https://github.com/sindhavdinesh/linkdin-project/tree/main/FlixVault
 
 # Step 2: Folder mein jao
 cd FlixVault
