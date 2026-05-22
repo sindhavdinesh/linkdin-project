@@ -264,7 +264,7 @@
         <div class="all-projects">
             <h2>📂 Complete Source Code</h2>
             <p style="color: #666;">All 21 projects + screen recording videos available on GitHub</p>
-            <a href="https://github.com/YOUR_USERNAME/21-days-frontend" class="main-github" target="_blank">
+            <a href="https://github.com/sindhavdinesh/linkdin-project/tree/main" class="main-github" target="_blank">
                 🐙 View Full Repository on GitHub
             </a>
         </div>
@@ -483,13 +483,13 @@
                             ${project.tech.map(t => `<span class="tech-tag">${t}</span>`).join('')}
                         </div>
                         <a 
-  href="https://github.com/sindhavdinesh/linkdin-project/tree/main"
-  class="github-link"
-  target="_blank"
-  rel="noopener noreferrer"
->
-  🐙 View Code on GitHub
-</a>
+                            href="${project.github}" 
+                            class="github-link" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                        >
+                            🐙 View Code on GitHub
+                        </a>
                     </div>
                 `;
                 grid.appendChild(card);
