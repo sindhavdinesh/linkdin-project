@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 Custom Password Generator - Create Your Own Password</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #0f0c29, #302b63, #24243e);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255,255,255,0.95);
+            border-radius: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .mode-switch {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            background: #f0f0f0;
+            padding: 8px;
+            border-radius: 60px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102,126,234,0.3);
+        }
+
+        /* Password Display Area */
+        .password-studio {
+            margin-bottom: 25px;
+        }
+
+        .password-box {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+
+        .password-box:focus-within {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+
+        #passwordInput {
+            width: 100%;
+            font-size: 1.2em;
+            font-family: 'Courier New', monospace;
+            border: none;
+            background: transparent;
+            outline: none;
+            padding: 10px;
+            font-weight: bold;
+            color: #333;
+            resize: vertical;
+        }
+
+        .password-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .clear-btn {
+            background: #ff4757;
+            color: white;
+        }
+
+        /* Custom Controls */
+        .custom-controls {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 20px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .word-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .word-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            outline: none;
+            font-size: 1em;
+        }
+
+        .word-input:focus {
+            border-color: #667eea;
+        }
+
+        .add-word-btn {
+            padding: 12px 20px;
+            background: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .words-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .word-tag {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .remove-word {
+            cursor: pointer;
+            font-weight: bold;
+            background: rgba(255,255,255,0.3);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .remove-word:hover {
+            background: rgba(255,255,255,0.5);
+            transform: scale(1.1);
+        }
+
+        /* Length and Options */
+        .length-slider {
+    width: 100%;
+    height: 8px;
+    border-radius: 5px;
+    background: #e0e0e0;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+        .length-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .option-check {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background: white;
+            border-radius: 10px;
+        }
+
+        /* Generate Button */
+        .generate-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102,126,234,0.3);
+        }
+
+        .strength-meter {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .strength-bars {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .strength-bar {
+            flex: 1;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .strength-bar.active {
+            background: linear-gradient(90deg, #ff4757, #ffa502, #1e90ff, #2ed573);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Password Generator</h1>
+        
+        <div class="mode-switch">
+            <button class="mode-btn active" onclick="switchMode('custom')">✏️ Custom Mode</button>
+            <button class="mode-btn" onclick="switchMode('auto')">🤖 Auto Generate</button>
+        </div>
+
+        <div class="password-studio">
+            <div class="password-box">
+                <textarea id="passwordInput" rows="3" placeholder="Type your own password here... or use auto-generate mode" style="resize: vertical;"></textarea>
+                <div class="password-actions">
+                    <button class="action-btn copy-btn" onclick="copyPassword()">📋 Copy Password</button>
+                    <button class="action-btn clear-btn" onclick="clearPassword()">🗑️ Clear</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="customPanel">
+            <div class="custom-controls">
+                <div class="control-group">
+                    <label class="control-label">📝 Add Your Own Words (Combine to make password)</label>
+                    <div class="word-input-group">
+                        <input type="text" id="customWord" class="word-input" placeholder="e.g., MySecret, Love, King, 2024">
+                        <button class="add-word-btn" onclick="addCustomWord()">+ Add Word</button>
+                    </div>
+                    <div id="wordsList" class="words-list"></div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">🔧 Password Length: <span id="lengthValue">16</span></label>
+                    <input type="range" id="lengthSlider" class="length-slider" min="6" max="32" value="16" oninput="updateLengthValue()">
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">✨ Character Sets to Include</label>
+                    <div class="options-grid">
+                        <label class="option-check">
+                            <input type="checkbox" id="useUppercase"> 🔠 Uppercase (A-Z)
+                        </label>
+                        <label class="option-check">
+                            <input type="checkbox" id="useLowercase"> 🔡 Lowercase (a-z)
+                        </label>
+                        <label class="option-check">
+                            <input type="checkbox" id="useNumbers"> 🔢 Numbers (0-9)
+                        </label>
+                        <label class="option-check">
+                            <input type="checkbox" id="useSymbols"> ✨ Symbols (!@#$%^&*)
+                        </label>
+                    </div>
+                </div>
+
+                <button class="generate-btn" onclick="buildCustomPassword()">
+                    🚀 Build Custom Password
+                </button>
+            </div>
+        </div>
+
+        <div id="autoPanel" style="display: none;">
+            <div class="custom-controls">
+                <div class="control-group">
+                    <label class="control-label">🔧 Password Length: <span id="autoLengthValue">16</span></label>
+                    <input type="range" id="autoLengthSlider" class="length-slider" min="6" max="32" value="16" oninput="updateAutoLengthValue()">
+                </div>
+
+                <div class="options-grid">
+                    <label class="option-check">
+                        <input type="checkbox" id="autoUppercase" checked> 🔠 Uppercase (A-Z)
+                    </label>
+                    <label class="option-check">
+                        <input type="checkbox" id="autoLowercase" checked> 🔡 Lowercase (a-z)
+                    </label>
+                    <label class="option-check">
+                        <input type="checkbox" id="autoNumbers" checked> 🔢 Numbers (0-9)
+                    </label>
+                    <label class="option-check">
+                        <input type="checkbox" id="autoSymbols" checked> ✨ Symbols (!@#$%^&*)
+                    </label>
+                </div>
+
+                <button class="generate-btn" onclick="generateAutoPassword()">
+                    🎲 Generate Random Password
+                </button>
+            </div>
+        </div>
+
+        <div class="strength-meter">
+            <div class="control-label">🔒 Password Strength</div>
+            <div class="strength-bars" id="strengthBars">
+                <div class="strength-bar"></div>
+                <div class="strength-bar"></div>
+                <div class="strength-bar"></div>
+                <div class="strength-bar"></div>
+            </div>
+            <div id="strengthText" style="margin-top: 10px; font-size: 0.9em; font-weight: bold;"></div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">✓ Copied!</div>
+
+    <script>
+        // Words array for custom mode
+        let customWords = [];
+
+        // Switch between modes
+        function switchMode(mode) {
+            const customPanel = document.getElementById('customPanel');
+            const autoPanel = document.getElementById('autoPanel');
+            const modeBtns = document.querySelectorAll('.mode-btn');
+            
+            if (mode === 'custom') {
+                customPanel.style.display = 'block';
+                autoPanel.style.display = 'none';
+                modeBtns[0].classList.add('active');
+                modeBtns[1].classList.remove('active');
+                updateStrength();
+            } else {
+                customPanel.style.display = 'none';
+                autoPanel.style.display = 'block';
+                modeBtns[0].classList.remove('active');
+                modeBtns[1].classList.add('active');
+                generateAutoPassword();
+            }
+        }
+
+        // Add custom word
+        function addCustomWord() {
+            const wordInput = document.getElementById('customWord');
+            let word = wordInput.value.trim();
+            
+            if (word === '') {
+                showToast('Please enter a word!');
+                return;
+            }
+            
+            customWords.push(word);
+            updateWordsList();
+            wordInput.value = '';
+        }
+
+        // Update words list display
+        function updateWordsList() {
+            const wordsListDiv = document.getElementById('wordsList');
+            wordsListDiv.innerHTML = '';
+            
+            customWords.forEach((word, index) => {
+                const wordTag = document.createElement('div');
+                wordTag.className = 'word-tag';
+                wordTag.innerHTML = `
+                    ${word}
+                    <span class="remove-word" onclick="removeWord(${index})">×</span>
+                `;
+                wordsListDiv.appendChild(wordTag);
+            });
+        }
+
+        // Remove word
+        function removeWord(index) {
+            customWords.splice(index, 1);
+            updateWordsList();
+        }
+
+        // Build custom password from words + random chars
+        function buildCustomPassword() {
+            let length = parseInt(document.getElementById('lengthSlider').value);
+            let useUpper = document.getElementById('useUppercase').checked;
+            let useLower = document.getElementById('useLowercase').checked;
+            let useNumbers = document.getElementById('useNumbers').checked;
+            let useSymbols = document.getElementById('useSymbols').checked;
+            
+            // Build base password from custom words
+            let basePassword = customWords.join('');
+            
+            if (basePassword.length === 0 && !useUpper && !useLower && !useNumbers && !useSymbols) {
+                showToast('❌ Add some words or select character sets!');
+                return;
+            }
+            
+            // If no custom words, generate random
+            if (basePassword.length === 0) {
+                generateAutoPassword();
+                return;
+            }
+            
+            // Build character set for additional chars
+            let charset = '';
+            if (useUpper) charset += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            if (useLower) charset += 'abcdefghijklmnopqrstuvwxyz';
+            if (useNumbers) charset += '0123456789';
+            if (useSymbols) charset += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+            
+            // Calculate how many more chars needed
+            let needed = length - basePassword.length;
+            
+            if (needed > 0) {
+                if (charset === '') {
+                    showToast('⚠️ Select at least one character set to fill remaining length!');
+                    return;
+                }
+                
+                // Add random chars
+                for (let i = 0; i < needed; i++) {
+                    const randomIndex = Math.floor(Math.random() * charset.length);
+                    basePassword += charset[randomIndex];
+                }
+            } else if (needed < 0) {
+                // Trim if too long
+                basePassword = basePassword.slice(0, length);
+            }
+            
+            // Shuffle the password for better randomness
+            basePassword = shuffleString(basePassword);
+            
+            // Display password
+            document.getElementById('passwordInput').value = basePassword;
+            updateStrength();
+            showToast('✓ Custom password created!');
+        }
+
+        // Auto generate random password
+function generateAutoPassword() {
+    const length = parseInt(document.getElementById('autoLengthSlider').value);
+    
+    const useUpper = document.getElementById('autoUppercase').checked;
+    const useLower = document.getElementById('autoLowercase').checked;
+    const useNumbers = document.getElementById('autoNumbers').checked;
+    const useSymbols = document.getElementById('autoSymbols').checked;
+
+    let charset = '';
+
+    if (useUpper) {
+        charset += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    }
+
+    if (useLower) {
+        charset += 'abcdefghijklmnopqrstuvwxyz';
+    }
+
+    if (useNumbers) {
+        charset += '0123456789';
+    }
+
+    if (useSymbols) {
+        charset += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+    }
+
+    if (charset === '') {
+        showToast('⚠️ Select at least one character type!');
+        return;
+    }
+
+    let password = '';
+
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * charset.length);
+        password += charset[randomIndex];
+    }
+
+    document.getElementById('passwordInput').value = password;
+
+    updateStrength();
+}
+
+        // Shuffle string
+        function shuffleString(str) {
+            const arr = str.split('');
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr.join('');
+        }
+
+        // Update length display
+        function updateLengthValue() {
+            const val = document.getElementById('lengthSlider').value;
+            document.getElementById('lengthValue').innerText = val;
+        }
+        
+        function updateAutoLengthValue() {
+            const val = document.getElementById('autoLengthSlider').value;
+            document.getElementById('autoLengthValue').innerText = val;
+            generateAutoPassword();
+        }
+
+        // Calculate and update password strength
+        function calculateStrength(password) {
+            let score = 0;
+            
+            if (password.length >= 12) score += 2;
+            else if (password.length >= 8) score += 1;
+            
+            if (/[A-Z]/.test(password)) score += 1;
+            if (/[a-z]/.test(password)) score += 1;
+            if (/[0-9]/.test(password)) score += 1;
+            if (/[^A-Za-z0-9]/.test(password)) score += 1;
+            
+            if (password.length >= 16) score += 1;
+            if (password.length >= 20) score += 1;
+            
+            if (score >= 7) return { text: 'Very Strong 💪', level: 4 };
+            if (score >= 5) return { text: 'Strong 🔒', level: 4 };
+            if (score >= 3) return { text: 'Medium ⚠️', level: 3 };
+            if (score >= 2) return { text: 'Weak ❌', level: 2 };
+            return { text: 'Very Weak 🚫', level: 1 };
+        }
+
+        function updateStrength() {
+            const password = document.getElementById('passwordInput').value;
+            const strength = calculateStrength(password);
+            const bars = document.querySelectorAll('#strengthBars .strength-bar');
+            const strengthText = document.getElementById('strengthText');
+            
+            strengthText.innerHTML = strength.text;
+            
+            bars.forEach((bar, index) => {
+                if (index < strength.level) {
+                    bar.classList.add('active');
+                } else {
+                    bar.classList.remove('active');
+                }
+            });
+        }
+
+        // Copy password
+        async function copyPassword() {
+            const password = document.getElementById('passwordInput').value;
+            if (!password) {
+                showToast('No password to copy!');
+                return;
+            }
+            
+            try {
+                await navigator.clipboard.writeText(password);
+                showToast('✓ Password copied!');
+            } catch (err) {
+                const textarea = document.createElement('textarea');
+                textarea.value = password;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast('✓ Copied!');
+            }
+        }
+
+        function clearPassword() {
+            document.getElementById('passwordInput').value = '';
+            updateStrength();
+            showToast('Cleared!');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // Add event listener for real-time strength check
+        document.getElementById('passwordInput').addEventListener('input', updateStrength);
+        
+        // Initialize
+        updateLengthValue();
+        updateAutoLengthValue();
+        updateStrength();
+    </script>
+</body>
+</html>

@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Memoir · Notes App | LocalStorage Edition</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, 'Segoe UI', 'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    }
+
+    :root {
+      --bg-page: #f8fafc;
+      --surface: #ffffff;
+      --surface-elevated: #ffffff;
+      --text-primary: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --accent-soft: #eef2ff;
+      --border: #e2e8f0;
+      --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0, 0, 0, 0.05);
+      --transition: all 0.2s ease;
+    }
+
+    body.dark {
+      --bg-page: #0f172a;
+      --surface: #1e293b;
+      --surface-elevated: #334155;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --accent: #818cf8;
+      --accent-hover: #a5b4fc;
+      --accent-soft: #2d3a5e;
+      --border: #334155;
+      --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+      background: var(--bg-page);
+      color: var(--text-primary);
+      transition: background 0.2s, color 0.2s;
+      padding: 2rem 1.5rem;
+      min-height: 100vh;
+    }
+
+    /* container */
+    .app-container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* header + theme toggle */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+      gap: 1rem;
+    }
+
+    .title-section h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), #c084fc);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+    }
+
+    .title-section p {
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+      font-size: 0.9rem;
+    }
+
+    .theme-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 60px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: var(--transition);
+      font-size: 0.9rem;
+    }
+
+    .theme-btn:hover {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+    }
+
+    /* note editor card */
+    .editor-card {
+      background: var(--surface);
+      border-radius: 28px;
+      box-shadow: var(--card-shadow);
+      padding: 1.6rem;
+      margin-bottom: 2.8rem;
+      border: 1px solid var(--border);
+      transition: var(--transition);
+    }
+
+    .editor-card h3 {
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+      font-size: 1.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .input-group {
+      margin-bottom: 1.2rem;
+    }
+
+    input, textarea {
+      width: 100%;
+      background: var(--bg-page);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 0.9rem 1.2rem;
+      font-size: 1rem;
+      color: var(--text-primary);
+      transition: var(--transition);
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    textarea {
+      min-height: 110px;
+    }
+
+    .note-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+
+    button {
+      background: var(--accent);
+      border: none;
+      padding: 0.7rem 1.6rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: white;
+      cursor: pointer;
+      transition: 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    button:hover {
+      background: var(--accent-hover);
+      transform: scale(0.97);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+
+    .btn-outline:hover {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* notes grid */
+    .notes-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      margin-bottom: 1.4rem;
+    }
+
+    .notes-count {
+      background: var(--accent-soft);
+      padding: 0.25rem 0.9rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--accent);
+    }
+
+    .clear-btn {
+      background: none;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      padding: 0.4rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+
+    .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.6rem;
+    }
+
+    .note-card {
+      background: var(--surface);
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      padding: 1.4rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .note-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 30px -12px rgba(0, 0, 0, 0.15);
+      border-color: var(--accent);
+    }
+
+    .note-title {
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      word-break: break-word;
+      color: var(--text-primary);
+    }
+
+    .note-body {
+      color: var(--text-secondary);
+      font-size: 0.92rem;
+      line-height: 1.45;
+      margin: 0.7rem 0 1rem;
+      word-break: break-word;
+      flex: 1;
+    }
+
+    .note-date {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      letter-spacing: 0.3px;
+    }
+
+    .card-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 0.5rem;
+    }
+
+    .edit-btn, .delete-btn {
+      background: transparent;
+      padding: 0.4rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .edit-btn {
+      border: 1px solid var(--border);
+      color: var(--accent);
+      background: transparent;
+    }
+
+    .edit-btn:hover {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+    }
+
+    .delete-btn {
+      border: 1px solid var(--border);
+      color: #ef4444;
+      background: transparent;
+    }
+
+    .delete-btn:hover {
+      background: #fee2e2;
+      border-color: #ef4444;
+      color: #dc2626;
+    }
+
+    .empty-notes {
+      text-align: center;
+      padding: 3rem;
+      background: var(--surface);
+      border-radius: 2rem;
+      color: var(--text-muted);
+      border: 1px dashed var(--border);
+      grid-column: 1 / -1;
+    }
+
+    footer {
+      margin-top: 3rem;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      padding-top: 2rem;
+    }
+
+    @media (max-width: 580px) {
+      body {
+        padding: 1.2rem;
+      }
+      .editor-card {
+        padding: 1.2rem;
+      }
+      .notes-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <div class="top-bar">
+    <div class="title-section">
+      <h1>📘 Memoir</h1>
+      <p>thoughts, ideas & reminders — saved locally</p>
+    </div>
+    <button id="themeToggleBtn" class="theme-btn">
+      <span>🌙</span> Dark / Light
+    </button>
+  </div>
+
+  <!-- Note editor section -->
+  <div class="editor-card">
+    <h3>✍️ Create new note</h3>
+    <div class="input-group">
+      <input type="text" id="noteTitleInput" placeholder="Title (e.g., Project idea, shopping list...)" maxlength="80">
+    </div>
+    <div class="input-group">
+      <textarea id="noteBodyInput" placeholder="Write your note content here..."></textarea>
+    </div>
+    <div class="note-actions">
+      <button id="addNoteBtn">➕ Add Note</button>
+      <button id="resetFormBtn" class="btn-outline">🗑️ Clear fields</button>
+    </div>
+  </div>
+
+  <!-- Notes section header + clear all -->
+  <div class="notes-header">
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <h2>📌 Your notes</h2>
+      <div class="notes-count" id="notesCount">0 notes</div>
+    </div>
+    <button id="clearAllNotesBtn" class="clear-btn">🗑️ Delete all notes</button>
+  </div>
+
+  <div id="notesContainer" class="notes-grid">
+    <!-- dynamic notes injected here -->
+  </div>
+  <footer>
+    💾 Auto-saves to localStorage · edit or delete anytime
+  </footer>
+</div>
+
+<script>
+  
+
+  // ----- DATA MODEL -----
+  let notesArray = [];      
+  let editMode = false;
+  let currentEditId = null;
+
+  // DOM elements
+  const titleInput = document.getElementById('noteTitleInput');
+  const bodyInput = document.getElementById('noteBodyInput');
+  const addBtn = document.getElementById('addNoteBtn');
+  const resetBtn = document.getElementById('resetFormBtn');
+  const notesContainer = document.getElementById('notesContainer');
+  const notesCountSpan = document.getElementById('notesCount');
+  const clearAllBtn = document.getElementById('clearAllNotesBtn');
+  const themeToggle = document.getElementById('themeToggleBtn');
+
+  // ---------- helper: save to localStorage + re-render ----------
+  function saveNotesToLocalStorage() {
+    localStorage.setItem('memoir_notes', JSON.stringify(notesArray));
+  }
+
+  // render full grid from notesArray
+  function renderNotes() {
+    if (!notesContainer) return;
+
+    if (notesArray.length === 0) {
+      notesContainer.innerHTML = `<div class="empty-notes">✨ No notes yet — write something meaningful above ✨</div>`;
+      notesCountSpan.innerText = `0 notes`;
+      return;
+    }
+
+    notesCountSpan.innerText = `${notesArray.length} ${notesArray.length === 1 ? 'note' : 'notes'}`;
+
+    // generate cards
+    let html = '';
+    for (let note of notesArray) {
+      const formattedDate = note.updatedAt
+        ? new Date(note.updatedAt).toLocaleString(undefined, { hour: '2-digit', minute:'2-digit', day:'numeric', month:'short' })
+        : new Date(note.createdAt).toLocaleString();
+
+      // Escape HTML to avoid XSS (simple but effective)
+      const safeTitle = escapeHtml(note.title) || 'Untitled';
+      const safeContent = escapeHtml(note.content) || 'No additional text';
+      
+      html += `
+        <div class="note-card" data-id="${note.id}">
+          <div class="note-title">${safeTitle}</div>
+          <div class="note-date">📅 ${formattedDate}</div>
+          <div class="note-body">${safeContent.replace(/\n/g, '<br>')}</div>
+          <div class="card-buttons">
+            <button class="edit-btn" data-id="${note.id}">✏️ Edit</button>
+            <button class="delete-btn" data-id="${note.id}">🗑️ Delete</button>
+          </div>
+        </div>
+      `;
+    }
+    notesContainer.innerHTML = html;
+
+    // attach event listeners to edit & delete buttons (dynamic)
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute('data-id');
+        if (id) enterEditMode(id);
+      });
+    });
+
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute('data-id');
+        if (id) deleteNoteById(id);
+      });
+    });
+  }
+
+  // simple HTML escaping (prevent injection)
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+      return c;
+    });
+  }
+
+  // reset form fields & exit edit mode
+  function resetForm() {
+    titleInput.value = '';
+    bodyInput.value = '';
+    editMode = false;
+    currentEditId = null;
+    addBtn.innerHTML = '➕ Add Note';
+    addBtn.style.background = '';
+    // optional visual reset
+  }
+
+  // add a brand new note
+  function addNewNote() {
+    let titleRaw = titleInput.value.trim();
+    let contentRaw = bodyInput.value.trim();
+
+    // Edge cases: empty title & body feedback
+    if (titleRaw === '' && contentRaw === '') {
+      alert('📢 Please add at least a title or some content to create a note.');
+      return;
+    }
+    if (titleRaw === '') titleRaw = '📝 Note';
+    
+    const newNote = {
+      id: Date.now().toString() + '-' + Math.floor(Math.random() * 10000),
+      title: titleRaw,
+      content: contentRaw,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    notesArray.unshift(newNote);  // newest first
+    saveNotesToLocalStorage();
+    renderNotes();
+    resetForm();
+  }
+
+  // delete note by id with confirmation
+  function deleteNoteById(id) {
+    const confirmDel = confirm('Delete this note permanently?');
+    if (!confirmDel) return;
+    const filtered = notesArray.filter(note => note.id !== id);
+    if (filtered.length === notesArray.length) return;
+    notesArray = filtered;
+    saveNotesToLocalStorage();
+    renderNotes();
+    // If we are in edit mode and the deleted note was currently being edited -> reset form gracefully
+    if (editMode && currentEditId === id) {
+      resetForm();
+    }
+  }
+
+  // Enter edit mode: populate form with note data
+  function enterEditMode(id) {
+    const noteToEdit = notesArray.find(n => n.id === id);
+    if (!noteToEdit) return;
+    
+    titleInput.value = noteToEdit.title;
+    bodyInput.value = noteToEdit.content;
+    editMode = true;
+    currentEditId = id;
+    addBtn.innerHTML = '✏️ Update Note';
+    // Scroll to editor smoothly
+    document.querySelector('.editor-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // update existing note
+  function updateCurrentNote() {
+    if (!currentEditId) return;
+    const noteIndex = notesArray.findIndex(n => n.id === currentEditId);
+    if (noteIndex === -1) {
+      // note maybe deleted while editing? reset mode
+      resetForm();
+      renderNotes();
+      return;
+    }
+    
+    let newTitle = titleInput.value.trim();
+    let newContent = bodyInput.value.trim();
+    if (newTitle === '' && newContent === '') {
+      alert('Cannot save empty note. Add some text or title.');
+      return;
+    }
+    if (newTitle === '') newTitle = '📝 Note';
+    
+    notesArray[noteIndex] = {
+      ...notesArray[noteIndex],
+      title: newTitle,
+      content: newContent,
+      updatedAt: new Date().toISOString(),
+    };
+    saveNotesToLocalStorage();
+    renderNotes();
+    resetForm();
+  }
+
+  // clear all notes (confirmation required)
+  function clearAllNotes() {
+    if (notesArray.length === 0) {
+      alert('No notes to delete.');
+      return;
+    }
+    const confirmClear = confirm('⚠️ Delete ALL notes? This action cannot be undone.');
+    if (confirmClear) {
+      notesArray = [];
+      saveNotesToLocalStorage();
+      renderNotes();
+      resetForm();
+    }
+  }
+
+  // HAndle add/update based on mode
+  function handleAddOrUpdate() {
+    if (editMode && currentEditId) {
+      updateCurrentNote();
+    } else {
+      addNewNote();
+    }
+  }
+
+  // ----- DARK MODE WITH localStorage -----
+  function initTheme() {
+    const savedTheme = localStorage.getItem('memoir_theme');
+    if (savedTheme === 'dark') {
+      document.body.classList.add('dark');
+    } else if (savedTheme === 'light') {
+      document.body.classList.remove('dark');
+    } else {
+      // system preference? optional: default to light, but we check prefers-color-scheme
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (prefersDark) {
+        document.body.classList.add('dark');
+        localStorage.setItem('memoir_theme', 'dark');
+      } else {
+        document.body.classList.remove('dark');
+        localStorage.setItem('memoir_theme', 'light');
+      }
+    }
+  }
+
+  function toggleTheme() {
+    if (document.body.classList.contains('dark')) {
+      document.body.classList.remove('dark');
+      localStorage.setItem('memoir_theme', 'light');
+    } else {
+      document.body.classList.add('dark');
+      localStorage.setItem('memoir_theme', 'dark');
+    }
+  }
+
+  // ----- LOAD DATA from localStorage on start -----
+  function loadInitialNotes() {
+    const stored = localStorage.getItem('memoir_notes');
+    if (stored) {
+      try {
+        notesArray = JSON.parse(stored);
+        
+        for (let note of notesArray) {
+          if (!note.updatedAt) note.updatedAt = note.createdAt || new Date().toISOString();
+          if (!note.id) note.id = Date.now() + '-' + Math.random();
+        }
+      } catch(e) { notesArray = []; }
+    } else {
+      
+      notesArray = [
+        {
+          id: 'sample1',
+          title: '🌟 Welcome to Memoir',
+          content: 'Start writing your ideas. Every note is saved automatically to your browser. Edit or delete anytime!',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+        {
+          id: 'sample2',
+          title: 'Dark mode ready',
+          content: 'Toggle theme using the top-right button — your preference is saved.',
+          createdAt: new Date(Date.now() - 86400000).toISOString(),
+          updatedAt: new Date(Date.now() - 86400000).toISOString(),
+        }
+      ];
+      saveNotesToLocalStorage();
+    }
+    renderNotes();
+  }
+
+ 
+  addBtn.addEventListener('click', handleAddOrUpdate);
+  resetBtn.addEventListener('click', resetForm);
+  clearAllBtn.addEventListener('click', clearAllNotes);
+  themeToggle.addEventListener('click', toggleTheme);
+
+   const handleGlobalKey = (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      handleAddOrUpdate();
+    }
+  };
+  document.addEventListener('keydown', handleGlobalKey);
+  
+ 
+  initTheme();
+  loadInitialNotes();
+
+  
+</script>
+</body>
+</html>
